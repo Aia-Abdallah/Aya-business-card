@@ -676,6 +676,47 @@
     document.getElementById('outQRBox').style.visibility = isChecked ? 'visible' : 'hidden';
     document.getElementById('qrGroup').style.display = isChecked ? 'block' : 'none';
   }
+  const FRONT_KEY = 'aya_card_front_saved';
+
+  function saveFront() {
+    const data = { inputs: {}, images: {} };
+    document.querySelectorAll('.controls input, .controls select').forEach((el, i) => {
+      if (el.type === 'file') return;
+      const key = el.id || 'inp_' + i;
+      data.inputs[key] = el.type === 'checkbox' ? el.checked : el.value;
+    });
+    document.querySelectorAll('.printable-card img').forEach(img => {
+      if (img.id) data.images[img.id] = img.src;
+    });
+    try { localStorage.setItem(FRONT_KEY, JSON.stringify(data)); } catch (e) {}
+  }
+
+  function loadFront() {
+    const raw = localStorage.getItem(FRONT_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+
+    document.querySelectorAll('.controls input, .controls select').forEach((el, i) => {
+      if (el.type === 'file') return;
+      const key = el.id || 'inp_' + i;
+      if (data.inputs[key] !== undefined) {
+        if (el.type === 'checkbox') el.checked = data.inputs[key];
+        else el.value = data.inputs[key];
+        el.dispatchEvent(new Event('input'));
+        el.dispatchEvent(new Event('change'));
+      }
+    });
+
+    Object.keys(data.images).forEach(id => {
+      const img = document.getElementById(id);
+      if (img) img.src = data.images[id];
+    });
+  }
+
+  // حفظ تلقائي عند أي تغيير أو رفع صورة
+  document.querySelector('.controls').addEventListener('input', saveFront);
+  document.querySelector('.controls').addEventListener('change', () => setTimeout(saveFront, 300));
+  window.addEventListener('DOMContentLoaded', loadFront);
 </script>
 
 </body>
