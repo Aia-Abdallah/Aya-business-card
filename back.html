@@ -756,6 +756,65 @@
   function toggleLidFlip(flip) {
     document.getElementById('lidBack').style.transform = flip ? 'rotate(180deg)' : 'none';
   }
+  const BACK_KEY = 'aya_card_back_saved';
+
+  function saveBack() {
+    const data = { inputs: {}, qrSrc: document.getElementById('outQR').src, stickers: [] };
+    document.querySelectorAll('.controls input').forEach((el, i) => {
+      if (el.type === 'file' || el.id === 'stSize' || el.id === 'stRotate' || el.id === 'stText') return;
+      const key = el.id || 'binp_' + i;
+      data.inputs[key] = el.type === 'checkbox' ? el.checked : el.value;
+    });
+    document.querySelectorAll('.draggable-sticker').forEach(el => {
+      data.stickers.push({
+        style: el.getAttribute('style'),
+        size: el.dataset.size,
+        rotate: el.dataset.rotate,
+        html: el.innerHTML
+      });
+    });
+    try { localStorage.setItem(BACK_KEY, JSON.stringify(data)); } catch (e) {}
+  }
+
+  function loadBack() {
+    const raw = localStorage.getItem(BACK_KEY);
+    if (!raw) return;
+    const data = JSON.parse(raw);
+
+    document.querySelectorAll('.controls input').forEach((el, i) => {
+      if (el.type === 'file' || el.id === 'stSize' || el.id === 'stRotate' || el.id === 'stText') return;
+      const key = el.id || 'binp_' + i;
+      if (data.inputs[key] !== undefined) {
+        if (el.type === 'checkbox') el.checked = data.inputs[key];
+        else el.value = data.inputs[key];
+        el.dispatchEvent(new Event('input'));
+        el.dispatchEvent(new Event('change'));
+      }
+    });
+
+    if (data.qrSrc) document.getElementById('outQR').src = data.qrSrc;
+
+    if (data.stickers && data.stickers.length > 0) {
+      document.querySelectorAll('.draggable-sticker').forEach(el => el.remove());
+      const lid = document.getElementById('lidBack');
+      data.stickers.forEach(st => {
+        const div = document.createElement('div');
+        div.className = 'draggable-sticker';
+        div.setAttribute('style', st.style);
+        div.dataset.size = st.size;
+        div.dataset.rotate = st.rotate;
+        div.innerHTML = st.html;
+        lid.appendChild(div);
+        initStickerEvents(div);
+      });
+    }
+  }
+
+  document.querySelector('.controls').addEventListener('input', saveBack);
+  document.querySelector('.controls').addEventListener('change', () => setTimeout(saveBack, 300));
+  document.querySelector('.controls').addEventListener('click', () => setTimeout(saveBack, 100));
+  window.addEventListener('mouseup', () => setTimeout(saveBack, 100));
+  window.addEventListener('DOMContentLoaded', loadBack);
 </script>
 
 </body>
