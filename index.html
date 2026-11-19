@@ -175,24 +175,24 @@
   }
 
   .webcam {
-    width: 7px;
-    height: 7px;
-    background-color: #1e242b;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 4px;
-    flex-shrink: 0;
-  }
-  .webcam::after {
-    content: '';
-    width: 2.5px;
-    height: 2.5px;
-    background-color: #64748b;
-    border-radius: 50%;
-  }
-
+  width: 9px;
+  height: 9px;
+  background-color: #0f172a;
+  border: 1.5px solid #9ce0f5; /* إطار سماوي فاتح يبرزها على الأسود */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+  flex-shrink: 0;
+}
+.webcam::after {
+  content: '';
+  width: 3.5px;
+  height: 3.5px;
+  background-color: #38bdf8; /* لمعة العدسة */
+  border-radius: 50%;
+}
   .screen-display {
     width: 100%;
     flex: 1;
