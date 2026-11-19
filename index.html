@@ -215,12 +215,13 @@
     gap: 10px;
   }
 
-  .logos-bar img {
-    max-height: 40px;
-    max-width: 85px;
-    object-fit: contain;
-    mix-blend-mode: multiply; /* يدمج أي خلفية بيضاء في اللوجو مع الشاشة */
-  }
+ .logos-bar img {
+  max-height: 32px;
+  max-width: 82px;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  clip-path: inset(0 0 2px 0); /* بيقص آخر 2 بكسل من تحت لإخفاء الخط الرفيع */
+}
 
   .profile-section {
     display: flex;
